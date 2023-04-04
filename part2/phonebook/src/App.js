@@ -3,20 +3,25 @@ import Filter from "./components/Filter.js";
 import Form from "./components/Form.js";
 import PersonsDisplay from "./components/PersonsDisplay.js";
 import phonebookService from "./services/phonebook.js";
+import Fail from "./components/Fail.js";
+import Success from "./components/Success.js";
 
 const App = () => {
-  const [persons, setPersons] = useState([
-    { name: "Arto Hellas", number: "040-1234567", id: 1 },
-  ]);
+  const [persons, setPersons] = useState(null);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filter, setFilter] = useState("");
+  const [fail, setFail] = useState(null);
+  const [success, setSuccess] = useState(null);
+
 
   useEffect(() => {
     phonebookService
       .getAll()
       .then((initialPersons) => setPersons(initialPersons))
-      .catch((error) =>{console.log(error)})
+      .catch((error) => {
+        console.log(error);
+      });
   }, []);
 
   const handleSubmit = (e) => {
@@ -29,27 +34,71 @@ const App = () => {
       name: newName,
       number: newNumber,
     };
-    phonebookService.create(personObject).then((returnedPerson) => {
-      setPersons(persons.concat(returnedPerson));
-      setNewName("");
-      setNewNumber("");
-    });
+    phonebookService
+      .create(personObject)
+      .then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson));
+        setNewName("");
+        setNewNumber("");
+        setSuccess(`Added ${returnedPerson.name}`);
+        setTimeout(() => {
+          setSuccess(null);
+        }, 2000);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
+
+  const handleUpdate = (id) => {
+    if (persons.map((p) => p.name).includes(newName)) {
+      let ans = window.confirm(
+        `${newName} is already added to phonebook, replace the old number with a new one?`
+      );
+      if (!ans) {
+        return;
+      }
+    }
+    const person = persons.find((p) => p.id === id);
+    const updatedPerson = { ...person, name: newName, number: newNumber };
+    phonebookService
+      .update(id, updatedPerson)
+      .then((returnedPerson) => {
+        setPersons(persons.map((p) => (p.id === id ? returnedPerson : p)));
+        setNewName("");
+        setNewNumber("");
+      })
+      .catch((error) => {
+        setFail(`Information of ${person.name} has already been removed from server`);
+        setTimeout(() => {
+          setFail(null);
+        }, 2000);
+        setPersons(persons.filter(p => p.id !== id))
+      });
+  };
+  if (!persons) {
+    return null;
+  }
 
   const handleDelete = (id) => {
     let answer = window.confirm(`Are you sure you want to delete?`);
     if (answer) {
-      phonebookService.remove(id).then(() => {
-        setPersons(persons.filter(p => p.id !== id))
-      })
-      .catch((error) => {
-        console.log(error)
-      })
+      phonebookService
+        .remove(id)
+        .then(() => {
+          setPersons(persons.filter((p) => p.id !== id));
+        })
+        .catch((error) => {
+          console.log(error);
+        });
     }
   };
 
   return (
     <div>
+      <h2>Phonebook</h2>
+      <Success success={success}/>
+      <Fail fail={fail}/>
       <Filter filter={filter} setFilter={setFilter} />
       <Form
         handleSubmit={handleSubmit}
@@ -62,6 +111,7 @@ const App = () => {
         persons={persons}
         filter={filter}
         handleDelete={handleDelete}
+        handleUpdate={handleUpdate}
       />
     </div>
   );

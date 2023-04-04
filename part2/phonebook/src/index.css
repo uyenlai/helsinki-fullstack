@@ -1,0 +1,19 @@
+.fail {
+    font-size: 16px;
+    color: orangered;
+    background-color: #ccc;
+    border: 3px solid orangered;;
+    border-radius: 5px;
+    padding: 10px 20px;
+    margin-bottom: 20px;
+}
+
+.success {
+    font-size: 16px;
+    color: green;
+    background-color: #ccc;
+    border: 3px solid green;
+    border-radius: 5px;
+    padding: 10px 20px;
+    margin-bottom: 20px;
+}
