@@ -14,7 +14,6 @@ const App = () => {
   const [fail, setFail] = useState(null);
   const [success, setSuccess] = useState(null);
 
-
   useEffect(() => {
     phonebookService
       .getAll()
@@ -29,7 +28,7 @@ const App = () => {
     if (persons.map((p) => p.name).includes(newName)) {
       alert(`${newName} is already added to phonebook`);
       return;
-    }
+    } 
     const personObject = {
       name: newName,
       number: newNumber,
@@ -43,10 +42,14 @@ const App = () => {
         setSuccess(`Added ${returnedPerson.name}`);
         setTimeout(() => {
           setSuccess(null);
-        }, 2000);
+        }, 3000);
       })
       .catch((error) => {
-        console.log(error);
+        setFail(error.response.data.error, error.message);
+        setTimeout(() => {
+          setFail(null);
+        }, 3000);
+        console.log(error.response.data.error);
       });
   };
 
@@ -69,11 +72,13 @@ const App = () => {
         setNewNumber("");
       })
       .catch((error) => {
-        setFail(`Information of ${person.name} has already been removed from server`);
+        setFail(
+          `Information of ${person.name} has already been removed from server`
+        );
         setTimeout(() => {
           setFail(null);
-        }, 2000);
-        setPersons(persons.filter(p => p.id !== id))
+        }, 3000);
+        setPersons(persons.filter((p) => p.id !== id));
       });
   };
   if (!persons) {
@@ -97,8 +102,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Success success={success}/>
-      <Fail fail={fail}/>
+      <Success success={success} />
+      <Fail fail={fail} />
       <Filter filter={filter} setFilter={setFilter} />
       <Form
         handleSubmit={handleSubmit}
