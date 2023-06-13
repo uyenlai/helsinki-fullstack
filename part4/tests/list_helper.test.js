@@ -58,6 +58,7 @@ const blogs = [
   }
 ]
 
+//total-likes-test
 describe('total likes', () => {
   test('of empty list is zero', () => {
     expect(listHelper.totalLikes([])).toBe(0)
@@ -72,6 +73,8 @@ describe('total likes', () => {
   })
 })
 
+
+//most-liked-blog-test
 describe('most liked blog', () => {
   test('the author with the most liked blog', () => {
     expect(listHelper.favoriteBlog(blogs)).toEqual({
@@ -82,6 +85,8 @@ describe('most liked blog', () => {
   })
 })
 
+
+//most-blogs-test
 describe('most blogs', () => {
   test('the author with most blogs', () => {
     expect(listHelper.mostBlogs(blogs)).toEqual({
@@ -89,4 +94,15 @@ describe('most blogs', () => {
       blogs: 3
     })
   })
+})
+
+
+//most-likes-test
+describe('most likes', () => {
+  test('the author with most likes', () => (
+    expect(listHelper.mostLikes(blogs)).toEqual({
+      author: 'Edsger W. Dijkstra',
+      likes: 17
+    })
+  ))
 })
