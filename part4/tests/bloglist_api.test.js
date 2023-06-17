@@ -87,6 +87,12 @@ test('a specific blog is within the returned blogs', async () => {
   expect(contents).toContain('React patterns')
 })
 
+test('unique identifier property of the blog posts', async () => {
+  const response = await api.get('/api/blogs')
+  const id = response.body.map(p => p._id)
+  expect(id).toBeDefined()
+})
+
 afterAll(async () => {
   await mongoose.connection.close()
 })
