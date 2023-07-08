@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Blog from "./components/Blog";
-import Notification from "./components/Notification";
+import Error from "./components/Error";
+import Success from "./components/Success";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 
@@ -9,7 +10,8 @@ const App = () => {
   const [newTitle, setNewTitle] = useState("");
   const [newAuthor, setNewAuthor] = useState("");
   const [newUrl, setNewUrl] = useState("");
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -43,9 +45,9 @@ const App = () => {
       setUsername("");
       setPassword("");
     } catch (exception) {
-      setErrorMessage("Wrong credentials");
+      setError("Wrong username or password");
       setTimeout(() => {
-        setErrorMessage(null);
+        setError(null);
       }, 5000);
     }
   };
@@ -63,6 +65,10 @@ const App = () => {
       setNewTitle("");
       setNewAuthor("");
       setNewUrl("");
+      setSuccess(`A new blog ${returnedObject.title} by ${returnedObject.author} added`);
+        setTimeout(() => {
+          setSuccess(null);
+        }, 5000);
     });
   };
 
@@ -111,6 +117,7 @@ const App = () => {
     return (
       <div>
         <h2>Log in to application</h2>
+        <Error message={error} />
         <form onSubmit={handleLogin}>
           <div>
             username
@@ -140,7 +147,7 @@ const App = () => {
   return (
     <div>
       <h1>Blogs</h1>
-      <Notification message={errorMessage} />
+      <Success message={success} />
       <p>
         {user.name} logged in <button onClick={handleLogout}>log out</button>
       </p>
