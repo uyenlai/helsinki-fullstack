@@ -7,6 +7,7 @@ const CreateNewBlogForm = ({
     newAuthor,
     newUrl
    }) => {
+  
    return (
      <div>
        <h2>Create new blog</h2>
@@ -30,6 +31,7 @@ const CreateNewBlogForm = ({
           <label>Url</label>
           <input value={newUrl} onChange={handleUrlChange} />
         </div>
+        <button type="submit">Create</button> 
       </form>
      </div>
    )
