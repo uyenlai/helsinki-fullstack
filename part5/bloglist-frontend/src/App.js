@@ -20,9 +20,16 @@ const App = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    blogService.getAll().then((initialBlogs) => {
-      setBlogs(initialBlogs);
-    });
+    const fetchData = async () => {
+      try {
+        const initialBlogs = await blogService.getAll();
+        setBlogs(initialBlogs);
+      } catch (error) {
+        console.log('Error:', error.message);
+      }
+    };
+  
+    fetchData();
   }, []);
 
   useEffect(() => {
@@ -67,12 +74,12 @@ const App = () => {
     const blogObject = {
       title: newTitle,
       author: newAuthor,
-      url: newUrl,
+      url: newUrl
     };
 
     try {
       const returnedObject = await blogService.create(blogObject);
-      setBlogs(blogs.concat(returnedObject));
+      setBlogs((prevBlogs) => [...prevBlogs, returnedObject]);
       setNewTitle("");
       setNewAuthor("");
       setNewUrl("");
@@ -133,7 +140,6 @@ const App = () => {
     );
   }
 
-  const userBlogs = blogs.filter((blog) => blog.user !== user.id);
   return (
     <div>
       <h1>Blogs</h1>
@@ -154,8 +160,8 @@ const App = () => {
           />
         </Togglable>
       )}
-      {userBlogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} />
+      {blogs.map((blog) => (
+          <Blog key={blog.id} blog={blog} user={user} />
       ))}
     </div>
   );
