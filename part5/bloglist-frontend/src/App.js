@@ -55,6 +55,11 @@ const App = () => {
     }
   };
 
+  const handleLogout = () => {
+    window.localStorage.removeItem("loggedUser");
+    window.location.reload(false);
+  };
+
   const togglableRef = useRef();
 
   const addBlog = async (e) => {
@@ -73,32 +78,29 @@ const App = () => {
       setNewUrl("");
       setSuccess(
         `A new blog ${returnedObject.title} by ${returnedObject.author} added`
-        );
-        setTimeout(() => {
-          setSuccess(null);
-        }, 5000);
-      } catch (error) {
-        setError("Failed to create a new blog");
-        setTimeout(() => {
-          setError(null);
-        }, 5000);
-      }
-      togglableRef.current.toggleVisibility();
+      );
+      setTimeout(() => {
+        setSuccess(null);
+      }, 5000);
+    } catch (error) {
+      setError("Failed to create a new blog");
+      setTimeout(() => {
+        setError(null);
+      }, 5000);
+    }
+    togglableRef.current.toggleVisibility();
   };
 
   const handleTitleChange = (e) => {
     setNewTitle(e.target.value);
   };
+
   const handleAuthorChange = (e) => {
     setNewAuthor(e.target.value);
   };
+
   const handleUrlChange = (e) => {
     setNewUrl(e.target.value);
-  };
-
-  const handleLogout = () => {
-    window.localStorage.removeItem("loggedUser");
-    window.location.reload(false);
   };
 
   if (user === null) {
@@ -129,7 +131,7 @@ const App = () => {
         </form>
       </div>
     );
-  };
+  }
 
   const userBlogs = blogs.filter((blog) => blog.user !== user.id);
   return (
@@ -140,19 +142,18 @@ const App = () => {
         {user.name} logged in <button onClick={handleLogout}>log out</button>
       </p>
       {user && (
-      <Togglable ref={togglableRef} buttonLabel="new blog">
-        <CreateNewBlogForm
-          newTitle={newTitle}
-          newAuthor={newAuthor}
-          newUrl={newUrl}
-          handleTitleChange={handleTitleChange}
-          handleAuthorChange={handleAuthorChange}
-          handleUrlChange={handleUrlChange}
-          addBlog={togglableRef.current ? addBlog : null}
-        />
-      </Togglable>
-    )
-  }
+        <Togglable ref={togglableRef} buttonLabel="New blog">
+          <CreateNewBlogForm
+            newTitle={newTitle}
+            newAuthor={newAuthor}
+            newUrl={newUrl}
+            handleTitleChange={handleTitleChange}
+            handleAuthorChange={handleAuthorChange}
+            handleUrlChange={handleUrlChange}
+            addBlog={togglableRef.current ? addBlog : null}
+          />
+        </Togglable>
+      )}
       {userBlogs.map((blog) => (
         <Blog key={blog.id} blog={blog} />
       ))}
