@@ -25,10 +25,10 @@ const App = () => {
         const initialBlogs = await blogService.getAll();
         setBlogs(initialBlogs);
       } catch (error) {
-        console.log('Error:', error.message);
+        console.log("Error:", error.message);
       }
     };
-  
+
     fetchData();
   }, []);
 
@@ -74,7 +74,7 @@ const App = () => {
     const blogObject = {
       title: newTitle,
       author: newAuthor,
-      url: newUrl
+      url: newUrl,
     };
 
     try {
@@ -110,60 +110,78 @@ const App = () => {
     setNewUrl(e.target.value);
   };
 
-  if (user === null) {
-    return (
-      <div>
-        <h2>Log in to application</h2>
-        <Error message={error} />
-        <form onSubmit={handleLogin}>
-          <div>
-            username
-            <input
-              type="text"
-              value={username}
-              name="Username"
-              onChange={({ target }) => setUsername(target.value)}
-            />
-          </div>
-          <div>
-            password
-            <input
-              type="password"
-              value={password}
-              name="Password"
-              onChange={({ target }) => setPassword(target.value)}
-            />
-          </div>
-          <button type="submit">login</button>
-        </form>
-      </div>
-    );
+  const updateLikes = async (blogToUpdate) => {
+    try {
+      const updatedBlog = await blogService.update(blogToUpdate);
+      setBlogs((prevBlogs) =>
+        prevBlogs.map((blog) =>
+          blog.id !== blogToUpdate.id ? blog : updatedBlog
+        )
+      );
+    } catch (error) {
+      setError("Failed to update likes");
+    }
   }
 
-  return (
-    <div>
-      <h1>Blogs</h1>
-      <Success message={success} />
-      <p>
-        {user.name} logged in <button onClick={handleLogout}>log out</button>
-      </p>
-      {user && (
-        <Togglable ref={togglableRef} buttonLabel="New blog">
-          <CreateNewBlogForm
-            newTitle={newTitle}
-            newAuthor={newAuthor}
-            newUrl={newUrl}
-            handleTitleChange={handleTitleChange}
-            handleAuthorChange={handleAuthorChange}
-            handleUrlChange={handleUrlChange}
-            addBlog={togglableRef.current ? addBlog : null}
+    if (user === null) {
+      return (
+        <div>
+          <h2>Log in to application</h2>
+          <Error message={error} />
+          <form onSubmit={handleLogin}>
+            <div>
+              username
+              <input
+                type="text"
+                value={username}
+                name="Username"
+                onChange={({ target }) => setUsername(target.value)}
+              />
+            </div>
+            <div>
+              password
+              <input
+                type="password"
+                value={password}
+                name="Password"
+                onChange={({ target }) => setPassword(target.value)}
+              />
+            </div>
+            <button type="submit">login</button>
+          </form>
+        </div>
+      );
+    }
+
+    return (
+      <div>
+        <h1>Blogs</h1>
+        <Success message={success} />
+        <p>
+          {user.name} logged in <button onClick={handleLogout}>log out</button>
+        </p>
+        {user && (
+          <Togglable ref={togglableRef} buttonLabel="New blog">
+            <CreateNewBlogForm
+              newTitle={newTitle}
+              newAuthor={newAuthor}
+              newUrl={newUrl}
+              handleTitleChange={handleTitleChange}
+              handleAuthorChange={handleAuthorChange}
+              handleUrlChange={handleUrlChange}
+              addBlog={togglableRef.current ? addBlog : null}
+            />
+          </Togglable>
+        )}
+        {blogs.map((blog) => (
+          <Blog 
+          key={blog.id} 
+          blog={blog} 
+          user={user}
+          updateLikes={updateLikes}
           />
-        </Togglable>
-      )}
-      {blogs.map((blog) => (
-          <Blog key={blog.id} blog={blog} user={user} />
-      ))}
-    </div>
-  );
-};
+        ))}
+      </div>
+    );
+  };
 export default App;
