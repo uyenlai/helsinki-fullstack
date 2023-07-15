@@ -21,11 +21,11 @@ const CreateNewBlogForm = ({
           </label>
         </div>
         <div>
-          <lable>
+          <label>
             {" "}
             Author
             <input value={newAuthor} onChange={handleAuthorChange} />
-          </lable>
+          </label>
         </div>
         <div>
           <label>Url</label>
