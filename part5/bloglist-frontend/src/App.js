@@ -74,7 +74,7 @@ const App = () => {
     const blogObject = {
       title: newTitle,
       author: newAuthor,
-      url: newUrl,
+      url: newUrl
     };
 
     try {
@@ -121,68 +121,86 @@ const App = () => {
     } catch (error) {
       setError("Failed to update likes");
     }
-  }
+  };
 
-    if (user === null) {
-      return (
-        <div>
-          <h2>Log in to application</h2>
-          <Error message={error} />
-          <form onSubmit={handleLogin}>
-            <div>
-              username
-              <input
-                type="text"
-                value={username}
-                name="Username"
-                onChange={({ target }) => setUsername(target.value)}
-              />
-            </div>
-            <div>
-              password
-              <input
-                type="password"
-                value={password}
-                name="Password"
-                onChange={({ target }) => setPassword(target.value)}
-              />
-            </div>
-            <button type="submit">login</button>
-          </form>
-        </div>
-      );
+  const removeBlog = async (blogToRemove) => {
+    const answer = window.confirm(
+      `Remove blog ${blogToRemove.title} by ${blogToRemove.author}?`
+    );
+    
+    if (answer) {
+      try {
+        await blogService.remove(blogToRemove);
+        setBlogs((prevBlogs) =>
+          prevBlogs.filter((blog) => blog.id !== blogToRemove.id)
+        );
+      }catch (error) {
+        setError("Failed to remove blog");
+      }
     }
-    const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes)
+  };
 
+  if (user === null) {
     return (
       <div>
-        <h1>Blogs</h1>
-        <Success message={success} />
-        <p>
-          {user.name} logged in <button onClick={handleLogout}>log out</button>
-        </p>
-        {user && (
-          <Togglable ref={togglableRef} buttonLabel="New blog">
-            <CreateNewBlogForm
-              newTitle={newTitle}
-              newAuthor={newAuthor}
-              newUrl={newUrl}
-              handleTitleChange={handleTitleChange}
-              handleAuthorChange={handleAuthorChange}
-              handleUrlChange={handleUrlChange}
-              addBlog={togglableRef.current ? addBlog : null}
+        <h2>Log in to application</h2>
+        <Error message={error} />
+        <form onSubmit={handleLogin}>
+          <div>
+            username
+            <input
+              type="text"
+              value={username}
+              name="Username"
+              onChange={({ target }) => setUsername(target.value)}
             />
-          </Togglable>
-        )}
-        {sortedBlogs.map((blog) => (
-          <Blog 
-          key={blog.id} 
-          blog={blog} 
-          user={user}
-          updateLikes={updateLikes}
-          />
-        ))}
+          </div>
+          <div>
+            password
+            <input
+              type="password"
+              value={password}
+              name="Password"
+              onChange={({ target }) => setPassword(target.value)}
+            />
+          </div>
+          <button type="submit">login</button>
+        </form>
       </div>
     );
-  };
+  }
+  const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes);
+
+  return (
+    <div>
+      <h1>Blogs</h1>
+      <Success message={success} />
+      <p>
+        {user.name} logged in <button onClick={handleLogout}>log out</button>
+      </p>
+      {user && (
+        <Togglable ref={togglableRef} buttonLabel="New blog">
+          <CreateNewBlogForm
+            newTitle={newTitle}
+            newAuthor={newAuthor}
+            newUrl={newUrl}
+            handleTitleChange={handleTitleChange}
+            handleAuthorChange={handleAuthorChange}
+            handleUrlChange={handleUrlChange}
+            addBlog={togglableRef.current ? addBlog : null}
+          />
+        </Togglable>
+      )}
+      {sortedBlogs.map((blog) => (
+        <Blog
+          key={blog.id}
+          blog={blog}
+          user={user}
+          updateLikes={updateLikes}
+          removeBlog={removeBlog}
+        />
+      ))}
+    </div>
+  );
+};
 export default App;

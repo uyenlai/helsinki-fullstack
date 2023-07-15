@@ -18,6 +18,10 @@ const Blog = (props) => {
     props.updateLikes(updatedBlog)
   }
 
+  const handleRemove = () => {
+    props.removeBlog(blog)
+  }
+
   const buttonLabel = visible ? 'hide' : 'view'
 
   const blogStyle = {
@@ -39,6 +43,7 @@ const Blog = (props) => {
       <p>Url: {blog.url}</p>
       <p>Likes: {blog.likes} <button onClick={handleLikes}>like</button></p>
       <p>User: {user.name}</p>
+      <button onClick={handleRemove}>Remove</button>
       </div>
     </div>  
   )
