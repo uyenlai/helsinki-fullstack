@@ -10,7 +10,7 @@ const Blog = (props) => {
     setVisible(!visible)
   }
 
-  const handleLikes = () => {
+  const updateLikes = () => {
     const updatedBlog = {
       ...blog,
       likes: blog.likes + 1
@@ -41,7 +41,7 @@ const Blog = (props) => {
       <p>Title: {blog.title} by {blog.author} <button onClick={toggleVisibility}>{buttonLabel}</button></p>
       <div style={showWhenVisible}>
         <p>Url: {blog.url}</p>
-        <p>Likes: {blog.likes} <button onClick={handleLikes}>like</button></p>
+        <p>Likes: {blog.likes} <button onClick={updateLikes}>like</button></p>
         {user ? <p>User: {user.name}</p> : <p>User: Not available</p>}
         <button onClick={handleRemove}>Remove</button>
       </div>

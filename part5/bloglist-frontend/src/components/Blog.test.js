@@ -1,6 +1,6 @@
 import React from 'react'
 import '@testing-library/jest-dom/extend-expect'
-import { render } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import Blog from './Blog'
 
@@ -43,4 +43,25 @@ test('clicking the view button calls event handler once', async () => {
   expect(component.container).toHaveTextContent(
     '12'
   )
+})
+
+test('clicking the like button twice calls event handler twice', async () => {
+  const blog = {
+    title: 'Canonical string reduction',
+    author: 'Edsger W. Dijkstra',
+    url: 'http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html',
+    likes: 12
+  }
+
+  const mockHandler = jest.fn()
+
+  render(
+    <Blog blog={blog} updateLikes={mockHandler} />
+  )
+
+  const button = screen.getByText('like')
+  userEvent.click(button)
+  await waitFor(() => expect(mockHandler.mock.calls).toHaveLength(1))
+  userEvent.click(button)
+  await waitFor(() => expect(mockHandler.mock.calls).toHaveLength(2))
 })
