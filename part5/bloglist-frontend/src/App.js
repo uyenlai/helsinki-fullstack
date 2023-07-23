@@ -9,9 +9,6 @@ import loginService from './services/login'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [newTitle, setNewTitle] = useState('')
-  const [newAuthor, setNewAuthor] = useState('')
-  const [newUrl, setNewUrl] = useState('')
   const [error, setError] = useState(null)
   const [success, setSuccess] = useState(null)
 
@@ -69,20 +66,10 @@ const App = () => {
 
   const togglableRef = useRef()
 
-  const addBlog = async (e) => {
-    e.preventDefault()
-    const blogObject = {
-      title: newTitle,
-      author: newAuthor,
-      url: newUrl
-    }
-
+  const createBlog = async (blogObject) => {
     try {
       const returnedObject = await blogService.create(blogObject)
       setBlogs((prevBlogs) => [...prevBlogs, returnedObject])
-      setNewTitle('')
-      setNewAuthor('')
-      setNewUrl('')
       setSuccess(
         `A new blog ${returnedObject.title} by ${returnedObject.author} added`
       )
@@ -96,18 +83,6 @@ const App = () => {
       }, 5000)
     }
     togglableRef.current.toggleVisibility()
-  }
-
-  const handleTitleChange = (e) => {
-    setNewTitle(e.target.value)
-  }
-
-  const handleAuthorChange = (e) => {
-    setNewAuthor(e.target.value)
-  }
-
-  const handleUrlChange = (e) => {
-    setNewUrl(e.target.value)
   }
 
   const updateLikes = async (blogToUpdate) => {
@@ -180,14 +155,7 @@ const App = () => {
       </p>
       {user && (
         <Togglable ref={togglableRef} buttonLabel="New blog">
-          <CreateNewBlogForm
-            newTitle={newTitle}
-            newAuthor={newAuthor}
-            newUrl={newUrl}
-            handleTitleChange={handleTitleChange}
-            handleAuthorChange={handleAuthorChange}
-            handleUrlChange={handleUrlChange}
-            addBlog={togglableRef.current ? addBlog : null}
+          <CreateNewBlogForm createBlog={createBlog}
           />
         </Togglable>
       )}
