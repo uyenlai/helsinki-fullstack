@@ -3,6 +3,7 @@ import { useState } from 'react'
 const Blog = (props) => {
   const { blog, user } = props
   const [visible, setVisible] = useState(false)
+  const [likes, setLikes] = useState(blog.likes || 0)
 
   const showWhenVisible = { display: visible ? '' : 'none' }
 
@@ -11,10 +12,14 @@ const Blog = (props) => {
   }
 
   const updateLikes = () => {
+    const updatedLikes = likes + 1
+    setLikes(updatedLikes)
+
     const updatedBlog = {
       ...blog,
-      likes: blog.likes + 1
+      likes: updatedLikes,
     }
+
     props.updateLikes(updatedBlog)
   }
 
@@ -29,7 +34,7 @@ const Blog = (props) => {
     paddingLeft: 2,
     border: 'solid',
     borderWidth: 1,
-    marginBottom: 5
+    marginBottom: 5,
   }
 
   if (!blog) {
@@ -37,11 +42,16 @@ const Blog = (props) => {
   }
 
   return (
-    <div style={blogStyle}  className='blog'>
-      <p>Title: {blog.title} by {blog.author} <button onClick={toggleVisibility}>{buttonLabel}</button></p>
+    <div style={blogStyle} className='blog'>
+      <p>
+        Title: {blog.title} by {blog.author}{' '}
+        <button onClick={toggleVisibility}>{buttonLabel}</button>
+      </p>
       <div style={showWhenVisible}>
         <p>Url: {blog.url}</p>
-        <p>Likes: {blog.likes} <button onClick={updateLikes}>like</button></p>
+        <p>
+          Likes: {likes} <button onClick={updateLikes}>like</button>
+        </p>
         {user ? <p>User: {user.name}</p> : <p>User: Not available</p>}
         <button onClick={handleRemove}>Remove</button>
       </div>
@@ -50,4 +60,3 @@ const Blog = (props) => {
 }
 
 export default Blog
-
